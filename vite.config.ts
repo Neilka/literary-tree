@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   // `vite build --mode single` packs everything (JS/CSS/data chunks) into one
   // standalone index.html that opens directly from the filesystem.
   plugins: [react(), tailwindcss(), ...(mode === 'single' ? [viteSingleFile()] : [])],
-  base: mode === 'single' ? './' : '/',
+  base: './',
   build: {
     outDir: mode === 'single' ? 'dist-single' : 'dist',
   },
