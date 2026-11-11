@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-parchment: #f0ebe0;
+  --color-parchment-dark: #e5ddcd;
+  --color-bark: #4a3d2a;
+  --color-bark-light: #7a6548;
+  --color-bark-dark: #2c2416;
+  --color-crimson: #C0392B;
+  --color-crimson-light: #e74c3c;
+  --color-ink: #14100c;
+  --color-gray-50: #faf8f4;
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+}
+
+html, body, #root {
+  margin: 0; padding: 0; width: 100%; min-height: 100vh;
+  background: var(--color-parchment);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Paper texture */
+.paper-bg {
+  background-image:
+    radial-gradient(circle at 15% 25%, rgba(180,160,120,0.12) 0%, transparent 50%),
+    radial-gradient(circle at 85% 65%, rgba(100,120,150,0.08) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+.grid-overlay {
+  background-image:
+    linear-gradient(rgba(90,74,50,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(90,74,50,0.05) 1px, transparent 1px);
+  background-size: 100px 100px;
+}
+
+/* Leaf cursor */
+.leaf-cursor { cursor: pointer; transition: all 0.3s ease; }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-parchment); }
+::-webkit-scrollbar-thumb { background: var(--color-bark-light); border-radius: 4px; }
+
+/* Selection */
+::selection { background: var(--color-crimson); color: var(--color-parchment); }
+
+/* Registration mark */
+.reg-mark {
+  position: fixed; width: 44px; height: 44px; border: 1.5px solid var(--color-bark); z-index: 100; pointer-events: none;
+}
+.reg-mark.tl { top: 30px; left: 30px; border-right: none; border-bottom: none; }
+.reg-mark.tr { top: 30px; right: 30px; border-left: none; border-bottom: none; }
+.reg-mark.bl { bottom: 30px; left: 30px; border-right: none; border-top: none; }
+.reg-mark.br { bottom: 30px; right: 30px; border-left: none; border-top: none; }
+
+/* GSAP helpers */
+.gsap-hidden { visibility: hidden; }
+
+/* Marquee / kinetic text */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 40s linear infinite; }
