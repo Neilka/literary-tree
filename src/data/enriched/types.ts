@@ -12,4 +12,9 @@ export interface EnrichedAuthor {
   positionSource?: string
   englishName?: string
   nobelYear?: number | null
+  inspiration?: {
+    author: string
+    illustrator: string
+    gameDesigner: string
+  }
 }

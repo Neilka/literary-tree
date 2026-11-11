@@ -275,6 +275,36 @@ export default function AuthorDetailPage() {
           </section>
         )}
 
+        {/* §05 CREATOR INSPIRATION */}
+        {enriched?.inspiration && (
+          <section className="detail-section mb-16">
+            <SectionHeader num="05" title="创作者灵感" en="INSPIRATIO CREATORUM" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <InspirationCard
+                icon="✎"
+                label="新人作者"
+                en="WRITER"
+                accent="text-crimson border-crimson/30"
+                content={enriched.inspiration.author}
+              />
+              <InspirationCard
+                icon="◈"
+                label="画师"
+                en="ILLUSTRATOR"
+                accent="text-amber-700 border-amber-700/30"
+                content={enriched.inspiration.illustrator}
+              />
+              <InspirationCard
+                icon="▣"
+                label="游戏策划"
+                en="GAME DESIGNER"
+                accent="text-ink border-ink/30"
+                content={enriched.inspiration.gameDesigner}
+              />
+            </div>
+          </section>
+        )}
+
       </div>
 
       {/* PREV / NEXT NAVIGATION */}
@@ -339,6 +369,23 @@ function SectionHeader({ num, title, en }: { num: string; title: string; en: str
       <span className="font-mono text-xs tracking-[3px] text-crimson font-bold">§ {num}</span>
       <h2 className="font-serif text-2xl md:text-3xl font-bold text-ink">{title}</h2>
       <span className="font-mono text-[11px] tracking-[3px] text-ink/40">{en}</span>
+    </div>
+  )
+}
+
+function InspirationCard({ icon, label, en, accent, content }: {
+  icon: string; label: string; en: string; accent: string; content: string
+}) {
+  return (
+    <div className={`bg-parchment border ${accent.split(' ')[1]} rounded-sm p-8 relative group hover:shadow-lg hover:-translate-y-1 transition-all duration-300`}>
+      <div className="flex items-center gap-3 mb-5">
+        <span className={`text-2xl ${accent.split(' ')[0]}`}>{icon}</span>
+        <div>
+          <div className={`font-serif text-lg font-bold ${accent.split(' ')[0]}`}>{label}</div>
+          <div className="font-mono text-[10px] tracking-[2px] text-ink/40">{en}</div>
+        </div>
+      </div>
+      <p className="font-serif text-[15px] leading-[1.75] text-ink/80">{content}</p>
     </div>
   )
 }

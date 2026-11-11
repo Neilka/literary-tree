@@ -1,6 +1,7 @@
 import type { EnrichedAuthor } from './types'
 import { branchMovements } from './branchMovements'
 import { enrichedAuthors as overrides } from '../enrichedAuthors'
+import { generateInspiration } from './inspiration'
 import indexMap from './indexMap.json'
 import data from '../authors.json'
 import type { Author } from '@/types'
@@ -38,6 +39,7 @@ export async function loadEnrichedAuthor(
 
   const author = authors.find(a => a.slug === slug)
   const mv = author ? branchMovements[author.branch] : undefined
+  const partial: Partial<EnrichedAuthor> = { works: base.works, movement: base.movement }
 
   return {
     ...base,
@@ -49,6 +51,7 @@ export async function loadEnrichedAuthor(
       ? base.works
       : (author?.works ?? []).map(w => ({ year: '', title: w, type: '作品' })),
     position: base.position || author?.reason || '',
+    inspiration: base.inspiration ?? (author ? generateInspiration(author, mv, partial) : undefined),
   }
 }
 

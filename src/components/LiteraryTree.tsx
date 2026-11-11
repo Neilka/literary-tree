@@ -19,8 +19,8 @@ interface AuthorCard {
 }
 
 // Canvas — the whole literary map
-const CANVAS_W = 3800
-const CANVAS_H = 7200
+const CANVAS_W = 4200
+const CANVAS_H = 9600
 
 export default function LiteraryTree({ branches }: Props) {
   const rootRef = useRef<SVGSVGElement>(null)
@@ -86,20 +86,19 @@ export default function LiteraryTree({ branches }: Props) {
       const perpY = Math.sin(tangent + Math.PI / 2) * side
 
       // card layout: stack perpendicular to the trunk
-      const cardH = 104
-      const cardW = 260
-      const gap = 22
-      // card layout: 4 cards per column, stacked perpendicular to the trunk
+      const cardH = 160
+      const cardW = 380
+      const gap = 32
       const branchCardsList: AuthorCard[] = []
 
       authors.forEach((a, ai) => {
-        const col = Math.floor(ai / 3)
-        const rowInCol = ai % 3
+        const col = Math.floor(ai / 2)
+        const rowInCol = ai % 2
         const offsetX = perpX * (cardW + gap) * (col + 1)
         const offsetY = perpY * (cardH + gap) * (col + 1)
         // stagger along the tangent direction
-        const alongX = Math.cos(tangent) * (rowInCol - 1) * (cardH + gap) * 0.9
-        const alongY = Math.sin(tangent) * (rowInCol - 1) * (cardH + gap) * 0.9
+        const alongX = Math.cos(tangent) * (rowInCol - 0.5) * (cardH + gap) * 0.9
+        const alongY = Math.sin(tangent) * (rowInCol - 0.5) * (cardH + gap) * 0.9
 
         const cx = node.x + offsetX + alongX
         const cy = node.y + offsetY + alongY
@@ -249,7 +248,7 @@ export default function LiteraryTree({ branches }: Props) {
   // Card helper text
   const cardWorks = (a: Author) => {
     const w = a.works?.[0] || ''
-    return w.length > 14 ? w.slice(0, 14) + '…' : w
+    return w.length > 10 ? w.slice(0, 10) + '…' : w
   }
 
   return (
@@ -396,15 +395,15 @@ export default function LiteraryTree({ branches }: Props) {
               {/* left accent bar */}
               <rect width="4" height={h} rx="2" fill={borderColor} />
               {/* name */}
-              <text x="16" y="42" fontSize="22" fontWeight="bold" fill="#2c2416" className="font-serif">
-                {a.name.length > 8 ? a.name.slice(0, 8) + '…' : a.name}
+              <text x="20" y="64" fontSize="44" fontWeight="bold" fill="#2c2416" className="font-serif">
+                {a.name.length > 7 ? a.name.slice(0, 7) + '…' : a.name}
               </text>
               {/* era */}
-              <text x="16" y="64" fontSize="12" fill="#6b5d4a" className="font-mono" style={{ letterSpacing: '0.5px' }}>
+              <text x="20" y="100" fontSize="24" fill="#6b5d4a" className="font-mono" style={{ letterSpacing: '0.5px' }}>
                 {a.era}
               </text>
               {/* work */}
-              <text x="16" y="86" fontSize="14" fill="#8b7d6a" className="font-serif" fontStyle="italic">
+              <text x="20" y="138" fontSize="28" fill="#8b7d6a" className="font-serif" fontStyle="italic">
                 {cardWorks(a) || '—'}
               </text>
               {/* pioneer/nobel dot */}
