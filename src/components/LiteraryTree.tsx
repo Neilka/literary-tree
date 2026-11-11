@@ -20,7 +20,7 @@ interface AuthorCard {
 
 // Canvas — the whole literary map
 const CANVAS_W = 3800
-const CANVAS_H = 5600
+const CANVAS_H = 7200
 
 export default function LiteraryTree({ branches }: Props) {
   const rootRef = useRef<SVGSVGElement>(null)
@@ -37,7 +37,7 @@ export default function LiteraryTree({ branches }: Props) {
   const layout = useMemo(() => {
     const n = branches.length
     const marginX = 500
-    const marginY = 400
+    const marginY = 500
     const usableW = CANVAS_W - marginX * 2
     const usableH = CANVAS_H - marginY * 2
     const centerX = CANVAS_W / 2
@@ -86,20 +86,20 @@ export default function LiteraryTree({ branches }: Props) {
       const perpY = Math.sin(tangent + Math.PI / 2) * side
 
       // card layout: stack perpendicular to the trunk
-      const cardH = 86
-      const cardW = 230
-      const gap = 14
+      const cardH = 104
+      const cardW = 260
+      const gap = 22
       // card layout: 4 cards per column, stacked perpendicular to the trunk
       const branchCardsList: AuthorCard[] = []
 
       authors.forEach((a, ai) => {
-        const col = Math.floor(ai / 4)
-        const rowInCol = ai % 4
+        const col = Math.floor(ai / 3)
+        const rowInCol = ai % 3
         const offsetX = perpX * (cardW + gap) * (col + 1)
         const offsetY = perpY * (cardH + gap) * (col + 1)
         // stagger along the tangent direction
-        const alongX = Math.cos(tangent) * (rowInCol - 1.5) * (cardH + gap) * 0.9
-        const alongY = Math.sin(tangent) * (rowInCol - 1.5) * (cardH + gap) * 0.9
+        const alongX = Math.cos(tangent) * (rowInCol - 1) * (cardH + gap) * 0.9
+        const alongY = Math.sin(tangent) * (rowInCol - 1) * (cardH + gap) * 0.9
 
         const cx = node.x + offsetX + alongX
         const cy = node.y + offsetY + alongY
@@ -216,7 +216,7 @@ export default function LiteraryTree({ branches }: Props) {
     const onWheel = (e: WheelEvent) => {
       e.preventDefault()
       const delta = e.deltaY > 0 ? 0.9 : 1.1
-      setZoom(z => Math.min(Math.max(z * delta, 0.3), 3))
+      setZoom(z => Math.min(Math.max(z * delta, 0.3), 6))
     }
     container.addEventListener('wheel', onWheel, { passive: false })
     return () => container.removeEventListener('wheel', onWheel)
@@ -249,7 +249,7 @@ export default function LiteraryTree({ branches }: Props) {
   // Card helper text
   const cardWorks = (a: Author) => {
     const w = a.works?.[0] || ''
-    return w.length > 16 ? w.slice(0, 16) + '…' : w
+    return w.length > 14 ? w.slice(0, 14) + '…' : w
   }
 
   return (
@@ -273,7 +273,7 @@ export default function LiteraryTree({ branches }: Props) {
 
       {/* Controls */}
       <div className="absolute bottom-4 right-4 z-20 flex flex-col gap-2">
-        <button onClick={() => setZoom(z => Math.min(z * 1.2, 3))}
+        <button onClick={() => setZoom(z => Math.min(z * 1.2, 6))}
           className="w-10 h-10 rounded-full bg-parchment border border-bark/30 flex items-center justify-center text-ink/70 hover:bg-ink hover:text-parchment transition-colors font-mono text-lg">+</button>
         <button onClick={() => setZoom(z => Math.max(z / 1.2, 0.3))}
           className="w-10 h-10 rounded-full bg-parchment border border-bark/30 flex items-center justify-center text-ink/70 hover:bg-ink hover:text-parchment transition-colors font-mono text-lg">−</button>
@@ -396,15 +396,15 @@ export default function LiteraryTree({ branches }: Props) {
               {/* left accent bar */}
               <rect width="4" height={h} rx="2" fill={borderColor} />
               {/* name */}
-              <text x="16" y="34" fontSize="16" fontWeight="bold" fill="#2c2416" className="font-serif">
-                {a.name.length > 10 ? a.name.slice(0, 10) + '…' : a.name}
+              <text x="16" y="42" fontSize="22" fontWeight="bold" fill="#2c2416" className="font-serif">
+                {a.name.length > 8 ? a.name.slice(0, 8) + '…' : a.name}
               </text>
               {/* era */}
-              <text x="16" y="54" fontSize="10" fill="#6b5d4a" className="font-mono" style={{ letterSpacing: '0.5px' }}>
+              <text x="16" y="64" fontSize="12" fill="#6b5d4a" className="font-mono" style={{ letterSpacing: '0.5px' }}>
                 {a.era}
               </text>
               {/* work */}
-              <text x="16" y="72" fontSize="11" fill="#8b7d6a" className="font-serif" fontStyle="italic">
+              <text x="16" y="86" fontSize="14" fill="#8b7d6a" className="font-serif" fontStyle="italic">
                 {cardWorks(a) || '—'}
               </text>
               {/* pioneer/nobel dot */}
