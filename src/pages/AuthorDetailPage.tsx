@@ -117,45 +117,52 @@ export default function AuthorDetailPage() {
 
           {/* Info */}
           <div>
-            <div className="font-mono text-[11px] tracking-[4px] text-crimson mb-4">
-              § {enriched?.movement?.join(' / ') ?? author.section.toUpperCase()}
+            {/* Movement tags — wrap into pills */}
+            <div className="flex flex-wrap gap-2 mb-5">
+              {(enriched?.movement?.length ? enriched.movement : [author.section])
+                .map((m, i) => (
+                  <span key={i} className="inline-block font-mono text-[11px] tracking-[2px] text-crimson border border-crimson/40 px-3 py-1 bg-crimson/[0.04]">
+                    {m}
+                  </span>
+                ))}
             </div>
-            <h1 className="font-serif text-[clamp(60px,8vw,120px)] font-black leading-[0.95] tracking-tight text-ink">
+
+            <h1 className="font-serif text-[clamp(48px,7vw,100px)] font-black leading-[0.95] tracking-tight text-ink">
               {author.name}
             </h1>
-            <div className="font-mono text-lg tracking-[6px] text-ink/50 mt-3">
+            <div className="font-mono text-base md:text-lg tracking-[4px] text-ink/50 mt-3 break-words">
               {enriched?.englishName?.toUpperCase() ?? author.name.split('·')[0]}
             </div>
 
-            {/* Pioneer badge */}
-            {author.isPioneer && (
-              <div className="inline-flex items-center gap-3 mt-5 px-4 py-2 border-2 border-crimson bg-crimson/5">
-                <span className="text-crimson text-lg">★</span>
-                <span className="font-mono text-xs tracking-[3px] text-crimson font-bold">
-                  {enriched?.movement?.includes('魔幻现实主义') ? '魔幻现实主义开创者' :
-                   enriched?.movement?.includes('新文化') ? '白话小说奠基人' :
-                   enriched?.movement?.includes('后现代') ? '后现代叙事先驱' :
-                   enriched?.movement?.includes('现代主义') ? '现代主义文学先驱' :
-                   '流派开创者 / CONDITOR'}
-                </span>
-              </div>
-            )}
+            {/* Badges row */}
+            <div className="flex flex-wrap gap-3 mt-6">
+              {author.isPioneer && (
+                <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-crimson bg-crimson/5">
+                  <span className="text-crimson">★</span>
+                  <span className="font-mono text-[11px] tracking-[2px] text-crimson font-bold">
+                    {enriched?.movement?.includes('魔幻现实主义') ? '魔幻现实主义开创者' :
+                     enriched?.movement?.includes('新文化') ? '白话小说奠基人' :
+                     enriched?.movement?.includes('后现代') ? '后现代叙事先驱' :
+                     enriched?.movement?.includes('现代主义') ? '现代主义文学先驱' :
+                     '流派开创者 · CONDITOR'}
+                  </span>
+                </div>
+              )}
+              {author.isNobel && (
+                <div className="inline-flex items-center gap-2 px-4 py-2 border border-ink/30 bg-parchment-dark">
+                  <span className="font-mono text-[11px] tracking-[2px] text-ink/70">
+                    ★ {enriched?.nobelYear ? `${enriched.nobelYear}年 ` : ''}诺贝尔文学奖
+                  </span>
+                </div>
+              )}
+            </div>
 
-            {/* Nobel badge */}
-            {author.isNobel && (
-              <div className="inline-flex items-center gap-3 mt-3 px-4 py-2 border border-ink/30 bg-parchment-dark">
-                <span className="font-mono text-xs tracking-[2px] text-ink/70">
-                  ★ {enriched?.nobelYear ? `${enriched.nobelYear}年 ` : ''}诺贝尔文学奖
-                </span>
-              </div>
-            )}
-
-            {/* Meta info */}
-            <div className="detail-meta mt-8 grid grid-cols-2 gap-x-8 gap-y-4 font-mono text-sm max-w-xl">
-              <MetaItem label="NATUS / 生卒" val={enriched?.birthDeath || author.era} />
-              <MetaItem label="ORIGO / 籍贯" val={enriched?.nationality || author.era} />
-              <MetaItem label="RADIUS / 所属分支" val={author.branch} />
-              <MetaItem label="PRAEMIUM / 荣誉" val={author.isNobel ? '诺贝尔文学奖' : author.isPioneer ? '流派开创者' : '经典作家'} />
+            {/* Meta info — bordered 2x2 archive grid */}
+            <div className="detail-meta mt-8 grid grid-cols-1 sm:grid-cols-2 max-w-xl border border-bark/30 divide-y divide-bark/30 sm:divide-y-0">
+              <MetaItem label="NATUS / 生卒" val={enriched?.birthDeath || author.era} bordered />
+              <MetaItem label="ORIGO / 籍贯" val={enriched?.nationality || author.era} bordered />
+              <MetaItem label="RAMUS / 所属分支" val={author.branch} bordered />
+              <MetaItem label="PRAEMIUM / 荣誉" val={author.isNobel ? '诺贝尔文学奖' : author.isPioneer ? '流派开创者' : '经典作家'} bordered />
             </div>
           </div>
         </div>
@@ -354,7 +361,15 @@ export default function AuthorDetailPage() {
   )
 }
 
-function MetaItem({ label, val }: { label: string; val: string }) {
+function MetaItem({ label, val, bordered }: { label: string; val: string; bordered?: boolean }) {
+  if (bordered) {
+    return (
+      <div className="p-5 sm:[&:nth-child(odd)]:border-r sm:[&:nth-child(odd)]:border-bark/30">
+        <div className="font-mono text-[10px] tracking-[2px] text-ink/50 uppercase mb-2">{label}</div>
+        <div className="font-serif text-ink font-medium leading-snug text-[15px]">{val}</div>
+      </div>
+    )
+  }
   return (
     <div className="border-t border-bark/30 pt-2">
       <div className="font-mono text-[10px] tracking-[2px] text-ink/50 uppercase mb-1">{label}</div>
