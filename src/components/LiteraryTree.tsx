@@ -348,26 +348,26 @@ export default function LiteraryTree({ branches }: Props) {
         {layout.nodes.map((node, i) => (
           <g key={i}>
             <circle data-el="era-node"
-              cx={node.x} cy={node.y} r="14"
-              fill="#C0392B" stroke="#f0ebe0" strokeWidth="3"
+              cx={node.x} cy={node.y} r="20"
+              fill="#C0392B" stroke="#f0ebe0" strokeWidth="4"
             />
-            <circle cx={node.x} cy={node.y} r="5" fill="#f0ebe0" />
+            <circle cx={node.x} cy={node.y} r="7" fill="#f0ebe0" />
             <text data-el="era-label"
-              x={node.x} y={node.y - 26}
+              x={node.x} y={node.y - 48}
               textAnchor="middle"
-              className="font-mono"
-              fontSize="13" fontWeight="bold"
-              fill="#4a3d2a"
-              style={{ letterSpacing: '1px' }}
+              className="font-serif"
+              fontSize="36" fontWeight="bold"
+              fill="#2c2416"
+              style={{ letterSpacing: '2px' }}
             >
               {node.branch.name}
             </text>
             <text data-el="era-label"
-              x={node.x} y={node.y + 32}
+              x={node.x} y={node.y + 56}
               textAnchor="middle"
               className="font-mono"
-              fontSize="10"
-              fill="#4a3d2a" opacity="0.6"
+              fontSize="22"
+              fill="#6b5d4a"
             >
               {node.branch.authors.length} scriptores
             </text>
