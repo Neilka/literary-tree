@@ -175,9 +175,7 @@ export default function AuthorDetailPage() {
         <section className="detail-section mb-16">
           <SectionHeader num="01" title="生平传记" en="VITA SCRIPTORIS" />
           {enriched ? (
-            <div className="font-serif text-[17px] leading-[2] text-ink/85">
-              {enriched.bio.map((p, i) => <p key={i} className="mb-5">{p}</p>)}
-            </div>
+            <BioTimeline bio={enriched.bio} />
           ) : (
             <div className="font-serif text-[17px] leading-[2] text-ink/85">
               <p>
@@ -374,6 +372,80 @@ function MetaItem({ label, val, bordered }: { label: string; val: string; border
     <div className="border-t border-bark/30 pt-2">
       <div className="font-mono text-[10px] tracking-[2px] text-ink/50 uppercase mb-1">{label}</div>
       <div className="font-serif text-ink font-medium leading-snug">{val}</div>
+    </div>
+  )
+}
+
+interface BioSegment { year: string; text: string }
+
+function parseBioTimeline(bio: string[]): BioSegment[] {
+  const full = bio.join(' ')
+  const yearRegex = /(约?前?\d+世纪|约?公元前?\d+年?|\d{3,4}年?)/g
+  const segments: BioSegment[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  // First segment (before any year)
+  const firstMatch = yearRegex.exec(full)
+  if (!firstMatch) {
+    return [{ year: '生平', text: full }]
+  }
+  if (firstMatch.index > 0) {
+    const head = full.slice(0, firstMatch.index).trim()
+    if (head) segments.push({ year: '早年', text: head })
+  }
+  lastIndex = firstMatch.index
+
+  yearRegex.lastIndex = firstMatch.index
+  while ((match = yearRegex.exec(full)) !== null) {
+    if (match.index > lastIndex) {
+      const text = full.slice(lastIndex, match.index).trim()
+      const yearMatch = text.match(/^(约?前?\d+世纪|约?公元前?\d+年?|\d{3,4}年?)/)
+      if (yearMatch) {
+        segments.push({ year: yearMatch[1], text: text.slice(yearMatch[1].length).trim() })
+      } else {
+        segments.push({ year: '生平', text })
+      }
+    }
+    lastIndex = match.index
+  }
+  // Last segment
+  const tail = full.slice(lastIndex).trim()
+  if (tail) {
+    const yearMatch = tail.match(/^(约?前?\d+世纪|约?公元前?\d+年?|\d{3,4}年?)/)
+    if (yearMatch) {
+      segments.push({ year: yearMatch[1], text: tail.slice(yearMatch[1].length).trim() })
+    } else {
+      segments.push({ year: '生平', text: tail })
+    }
+  }
+  return segments.filter(s => s.text)
+}
+
+function BioTimeline({ bio }: { bio: string[] }) {
+  const segments = parseBioTimeline(bio)
+  if (segments.length <= 1) {
+    return (
+      <div className="font-serif text-[17px] leading-[2] text-ink/85">
+        {bio.map((p, i) => <p key={i} className="mb-5">{p}</p>)}
+      </div>
+    )
+  }
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {segments.map((s, i) => (
+        <div key={i} className="border border-bark/25 bg-parchment-dark/40 p-5 flex gap-4">
+          <div className="shrink-0 w-[110px]">
+            <div className="font-mono text-[13px] tracking-[1px] text-crimson font-bold leading-snug">
+              {s.year}
+            </div>
+            <div className="w-8 h-[1px] bg-bark/30 mt-2" />
+          </div>
+          <p className="font-serif text-[15px] leading-[1.85] text-ink/85 flex-1">
+            {s.text}
+          </p>
+        </div>
+      ))}
     </div>
   )
 }
