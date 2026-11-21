@@ -50,7 +50,9 @@ export default function AuthorDetailPage() {
       gsap.from('.detail-portrait', { scale: 0.8, opacity: 0, duration: 1, delay: 0.2, ease: 'back.out(1.5)' })
       gsap.from('.detail-meta > *', { y: 20, opacity: 0, duration: 0.5, delay: 0.6, stagger: 0.1, ease: 'power2.out' })
       gsap.from('.detail-section', { y: 40, opacity: 0, duration: 0.8, stagger: 0.12, delay: 1, ease: 'power2.out' })
-      gsap.from('.work-item', { x: -30, opacity: 0, duration: 0.5, stagger: 0.05, delay: 1.2, ease: 'power2.out' })
+      // NOTE: removed `.work-item` gsap.from — it left items stuck at opacity:0
+      // when the tween failed to play (async data + effect timing). The parent
+      // .detail-section fade-in already covers the works list.
     }, rootRef)
     return () => ctx.revert()
   }, [slug, loaded])

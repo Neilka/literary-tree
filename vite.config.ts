@@ -27,7 +27,10 @@ export default defineConfig(({ mode }) => ({
       },
     },
   ],
-  base: './',
+  // Absolute base so asset URLs resolve correctly on GitHub Pages project
+  // sites (https://<user>.github.io/<repo>/) even on deep routes like
+  // /author/:slug. Change this if the repo is renamed.
+  base: '/literary-tree/',
   build: {
     outDir: mode === 'single' ? 'dist-single' : 'dist',
   },
