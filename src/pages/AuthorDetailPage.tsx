@@ -237,23 +237,14 @@ export default function AuthorDetailPage() {
             <div className="relative pl-10">
               <div className="absolute left-3 top-2 bottom-2 w-[2px] bg-bark/30" />
               {enriched.works.map((w, i) => (
-                <div key={i} className="work-item relative mb-5 pl-4">
-                  <div className="absolute -left-[30px] top-[10px] w-3 h-3 rounded-full bg-crimson border-2 border-parchment" />
-                  <div className="font-mono text-xs text-crimson font-bold tracking-[1px]">{w.year}</div>
-                  <div className="font-serif text-xl font-bold text-ink leading-tight mt-1">{w.title}</div>
-                  <div className="font-mono text-[11px] text-ink/40 mt-0.5 tracking-[1px]">{w.type}</div>
-                  {w.note && <div className="font-serif text-[14px] text-ink/60 mt-1 leading-relaxed">{w.note}</div>}
-                </div>
+                <WorkItem key={i} w={w} idx={i} slug={author.slug} />
               ))}
             </div>
           ) : (
             <div className="space-y-3">
               {author.works.length > 0 ? (
                 author.works.map((w, i) => (
-                  <div key={i} className="work-item flex items-baseline gap-4 font-serif">
-                    <span className="w-2 h-2 rounded-full bg-crimson shrink-0 mt-2" />
-                    <span className="text-lg text-ink">{w}</span>
-                  </div>
+                  <SimpleWorkItem key={i} title={w} idx={i} slug={author.slug} />
                 ))
               ) : (
                 <p className="text-ink/40 font-mono text-sm">本作者作品收录于正典表格中，详细年表待补充。</p>
@@ -436,10 +427,10 @@ function BioTimeline({ bio }: { bio: string[] }) {
       {segments.map((s, i) => (
         <div key={i} className="border border-bark/25 bg-parchment-dark/40 p-5 flex gap-4">
           <div className="shrink-0 w-[110px]">
-            <div className="font-mono text-[13px] tracking-[1px] text-crimson font-bold leading-snug">
+            <div className="font-mono text-[13px] tracking-[1px] text-emerald-700 font-bold leading-snug">
               {s.year}
             </div>
-            <div className="w-8 h-[1px] bg-bark/30 mt-2" />
+            <div className="w-8 h-[1px] bg-emerald-700/40 mt-2" />
           </div>
           <p className="font-serif text-[15px] leading-[1.85] text-ink/85 flex-1">
             {s.text}
@@ -473,6 +464,86 @@ function InspirationCard({ icon, label, en, accent, content }: {
         </div>
       </div>
       <p className="font-serif text-[15px] leading-[1.75] text-ink/80">{content}</p>
+    </div>
+  )
+}
+
+interface Work {
+  year: string
+  title: string
+  type: string
+  note?: string
+}
+
+function WorkItem({ w, idx, slug }: { w: Work; idx: number; slug: string }) {
+  const key = `lt:read:${slug}:${idx}`
+  const [read, setRead] = useState<boolean>(() => {
+    try { return localStorage.getItem(key) === '1' } catch { return false }
+  })
+  const toggle = () => {
+    const n = !read
+    setRead(n)
+    try { localStorage.setItem(key, n ? '1' : '0') } catch { /* ignore */ }
+  }
+  const green = '#047857'
+  return (
+    <div className={`work-item relative mb-5 pl-4 transition-opacity ${read ? 'opacity-75' : ''}`}>
+      <div
+        className="absolute -left-[30px] top-[10px] w-3 h-3 rounded-full border-2 border-parchment transition-colors"
+        style={{ background: read ? green : '#C0392B' }}
+      />
+      <div
+        className="font-mono text-xs font-bold tracking-[1px] transition-colors"
+        style={{ color: read ? green : '#C0392B' }}
+      >{w.year}</div>
+      <div className="flex items-start justify-between gap-3 mt-1">
+        <div className={`font-serif text-xl font-bold leading-tight transition-all ${read ? 'line-through text-ink/45' : 'text-ink'}`}>
+          {w.title}
+        </div>
+        <button
+          onClick={toggle}
+          className="shrink-0 mt-1 group"
+          aria-label={read ? `标记《${w.title}》为未读` : `标记《${w.title}》为已读`}
+          title={read ? '已读完 · 点击取消' : '点击标记已读完'}
+        >
+          <span className={`w-[22px] h-[22px] border-2 inline-flex items-center justify-center transition-all ${read ? 'bg-emerald-700 border-emerald-700' : 'border-bark/40 bg-parchment group-hover:border-emerald-600'}`}>
+            {read && (
+              <svg viewBox="0 0 12 12" className="w-3 h-3 text-parchment">
+                <path d="M2 6l3 3 5-6" stroke="currentColor" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </span>
+        </button>
+      </div>
+      <div className="font-mono text-[11px] text-ink/40 mt-0.5 tracking-[1px]">{w.type}</div>
+      {w.note && <div className="font-serif text-[14px] text-ink/60 mt-1 leading-relaxed">{w.note}</div>}
+    </div>
+  )
+}
+
+function SimpleWorkItem({ title, idx, slug }: { title: string; idx: number; slug: string }) {
+  const key = `lt:read:${slug}:s${idx}`
+  const [read, setRead] = useState<boolean>(() => {
+    try { return localStorage.getItem(key) === '1' } catch { return false }
+  })
+  const toggle = () => {
+    const n = !read
+    setRead(n)
+    try { localStorage.setItem(key, n ? '1' : '0') } catch { /* ignore */ }
+  }
+  return (
+    <div className="work-item flex items-baseline gap-4 font-serif">
+      <span className={`w-2 h-2 rounded-full shrink-0 mt-2 transition-colors`} style={{ background: read ? '#047857' : '#C0392B' }} />
+      <span className={`text-lg flex-1 transition-all ${read ? 'line-through text-ink/45' : 'text-ink'}`}>{title}</span>
+      <button onClick={toggle} className="shrink-0 group" aria-label="已读切换">
+        <span className={`w-[20px] h-[20px] border-2 inline-flex items-center justify-center transition-all ${read ? 'bg-emerald-700 border-emerald-700' : 'border-bark/40 bg-parchment group-hover:border-emerald-600'}`}>
+          {read && (
+            <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-parchment">
+              <path d="M2 6l3 3 5-6" stroke="currentColor" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </span>
+      </button>
     </div>
   )
 }
